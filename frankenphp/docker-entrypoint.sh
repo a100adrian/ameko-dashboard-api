@@ -40,13 +40,14 @@ if [ "$1" = 'frankenphp' ] || [ "$1" = 'php' ] || [ "$1" = 'messenger' ] || [ "$
 	# 	sleep 1
 	# done
 
-	echo "Running migrations..."
-	bin/console doctrine:migrations:migrate --no-interaction
-	
-	# if ls -A migrations/*.php > /dev/null 2>&1; then
-		# echo "Resetting database..."
-		# composer ws:db:reset
-	# fi
+  php bin/console doctrine:migrations:sync-metadata-storage --no-interaction
+
+  if php bin/console doctrine:migrations:status | grep -q "New Migrations"; then
+      echo "Running migrations..."
+      php bin/console doctrine:migrations:migrate --no-interaction
+  else
+      echo "No migrations to run."
+  fi
 
 	if [ "$APP_ENV" != 'prod' ] && [ "$LOAD_FIXTURES" = 'true' ] && [ -d src/DataFixtures ] && ls -A src/DataFixtures/*.php > /dev/null 2>&1; then
 		echo "Loading fixtures..."

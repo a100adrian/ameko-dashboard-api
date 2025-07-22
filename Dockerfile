@@ -143,6 +143,6 @@ RUN set -eux; \
     composer run-script --no-dev post-install-cmd; \
     chmod +x bin/console; sync;
 
-EXPOSE 443 8080
+EXPOSE 80 8080
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
