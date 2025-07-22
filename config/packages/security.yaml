@@ -9,6 +9,13 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        # Keep the firewall bellow at the top to match before `/dashboard-api/v1` firewall rule
+        api_docs:
+            pattern: ^/v1/docs
+            http_basic:
+                realm: Ameko API Docs
+            stateless: true
+            provider: users_in_memory
         main:
             lazy: true
             provider: users_in_memory
@@ -24,6 +31,8 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/docs, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI docs
+
 
 when@test:
     security:
