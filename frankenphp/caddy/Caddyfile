@@ -1,0 +1,43 @@
+{
+	{$CADDY_GLOBAL_OPTIONS}
+
+	auto_https {$AUTO_HTTPS:off}
+
+	frankenphp {
+		{$FRANKENPHP_CONFIG}
+	}
+
+	order mercure after encode
+	order vulcain after reverse_proxy
+	order php_server before file_server
+}
+
+{$CADDY_EXTRA_CONFIG}
+
+(common) {
+	log {
+		level DEBUG
+		format filter {
+			wrap console
+			fields {
+				uri query {
+					replace authorization REDACTED
+				}
+			}
+		}
+	}
+
+	root * /app/public
+	encode zstd br gzip
+	vulcain
+
+	{$CADDY_SERVER_EXTRA_DIRECTIVES}
+
+	header ?Permissions-Policy "browsing-topics=()"
+
+	php_server
+}
+
+http://{$SERVER_NAME:localhost}:8080 {
+	import common
+}

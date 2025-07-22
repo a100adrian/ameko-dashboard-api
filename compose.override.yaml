@@ -1,12 +1,29 @@
-
+# Development environment override
 services:
-###> doctrine/doctrine-bundle ###
-  database:
-    ports:
-      - "5432"
-###< doctrine/doctrine-bundle ###
+  php:
+    build:
+      context: .
+      target: frankenphp_dev
+    volumes:
+      - ./:/app
+      - ./frankenphp/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./frankenphp/caddy/certs:/etc/caddy/certs
+      - ./frankenphp/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
+      # If you develop on Mac or Windows you can remove the vendor/ directory
+      #  from the bind-mount for better performance by enabling the next line:
+      #- /app/vendor
+    environment:
+      SERVER_NAME: ${SERVER_NAME:-localhost}
+      XDEBUG_MODE: ${XDEBUG_MODE:-coverage}
+      AUTO_HTTPS: "off"
+      #      MERCURE_EXTRA_DIRECTIVES: demo
+      # See https://xdebug.org/docs/all_settings#mode
+    extra_hosts:
+      # Ensure that host.docker.internal is correctly defined on Linux
+      - host.docker.internal:host-gateway
+  #    tty: true
 
-###> symfony/mailer ###
+  ###> symfony/mailer ###
   mailer:
     image: axllent/mailpit
     ports:
@@ -15,4 +32,15 @@ services:
     environment:
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
-###< symfony/mailer ###
+  ###< symfony/mailer ###
+
+  # messenger:
+  #   build:
+  #     context: .
+  #     target: frankenphp_dev
+  #   volumes:
+  #     - ./:/app
+  #     - ./frankenphp/conf.d/app.dev.ini:/usr/local/etc/php/conf.d/app.dev.ini:ro
+
+###> symfony/mercure-bundle ###
+###< symfony/mercure-bundle ###

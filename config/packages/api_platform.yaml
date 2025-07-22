@@ -1,0 +1,38 @@
+api_platform:
+    title: "Ameko"
+    description: "Ameko API"
+    version: 1.0.0
+    show_webby: false
+    enable_re_doc: false
+    path_segment_name_generator: api_platform.metadata.path_segment_name_generator.dash
+    mapping:
+        paths:
+          ["%kernel.project_dir%/src/ApiResource", "%kernel.project_dir%/src/Entity"]
+    formats:
+        json: ["application/json"]
+        # Can not remove jsonld format. The Delete operation require jsonld
+        jsonld: ["application/ld+json"]
+        multipart: ["multipart/form-data"]
+        html: ["text/html"]
+    patch_formats:
+        json: ["application/merge-patch+json"]
+    docs_formats:
+        jsonld: ["application/ld+json"]
+        jsonopenapi: ["application/vnd.openapi+json"]
+        json: ["application/json"]
+        html: ["text/html"]
+    defaults:
+        cache_headers:
+            vary: ["Content-Type", "Authorization", "Origin"]
+        extra_properties:
+            standard_put: true
+            rfc_7807_compliant_errors: true
+        normalization_context:
+            skip_null_values: false
+        pagination_client_items_per_page: true
+        pagination_maximum_items_per_page: 50
+        route_prefix: "/api"
+    enable_entrypoint: false
+    collection:
+        pagination:
+            items_per_page_parameter_name: "perPage"
